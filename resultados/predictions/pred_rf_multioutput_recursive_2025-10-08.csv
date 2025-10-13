@@ -1,0 +1,8 @@
+model,pred_date_utc,target_date,pred_close
+rf_multioutput_recursive,2025-10-08,2025-10-09,28947.475
+rf_multioutput_recursive,2025-10-08,2025-10-10,28947.475
+rf_multioutput_recursive,2025-10-08,2025-10-11,28947.475
+rf_multioutput_recursive,2025-10-08,2025-10-12,28947.475
+rf_multioutput_recursive,2025-10-08,2025-10-13,28947.475
+rf_multioutput_recursive,2025-10-08,2025-10-14,28947.475
+rf_multioutput_recursive,2025-10-08,2025-10-15,28947.475

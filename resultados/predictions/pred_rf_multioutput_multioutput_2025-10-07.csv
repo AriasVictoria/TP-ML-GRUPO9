@@ -1,0 +1,8 @@
+model,pred_date_utc,target_date,pred_close
+rf_multioutput_multioutput,2025-10-07,2025-10-08,28947.475
+rf_multioutput_multioutput,2025-10-07,2025-10-09,29037.15833333334
+rf_multioutput_multioutput,2025-10-07,2025-10-10,29147.475
+rf_multioutput_multioutput,2025-10-07,2025-10-11,29237.158333333336
+rf_multioutput_multioutput,2025-10-07,2025-10-12,29347.475
+rf_multioutput_multioutput,2025-10-07,2025-10-13,29437.158333333336
+rf_multioutput_multioutput,2025-10-07,2025-10-14,29547.475
