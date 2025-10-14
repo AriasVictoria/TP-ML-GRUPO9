@@ -1,86 +1,46 @@
 import pandas as pd
 import numpy as np
-from pathlib import Path
-import yfinance as yf
 import logging
+from pathlib import Path
 
-# Configuración de logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-# Ruta al archivo CSV
-DATA_DIR = Path(__file__).resolve().parents[1] / "data" / "raw"
-DATA_DIR.mkdir(parents=True, exist_ok=True)
-CSV_FILE = DATA_DIR / "BTC-USD_daily.csv"
+DATA_PROCESSED_DIR = Path(__file__).resolve().parents[1] / "data" / "processed"
+DATA_PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
-def download_btc_csv():
-    """
-    Descarga datos de BTC-USD si el archivo no existe.
-    Guarda el CSV en la carpeta /data/raw.
-    """
-    if not CSV_FILE.exists():
-        logging.info("Descargando histórico de BTC-USD desde Yahoo Finance...")
-        df = yf.download("BTC-USD", period="1y", interval="1d")
-        if df.empty:
-            logging.warning("No se descargaron datos. Verificá la conexión.")
-            return None
-        df.reset_index(inplace=True)
-        df.to_csv(CSV_FILE, index=False)
-        logging.info(f"CSV guardado en {CSV_FILE}")
-    else:
-        logging.info(f"CSV existente: {CSV_FILE}")
+DATASET_FILE = DATA_PROCESSED_DIR / "dataset_completo.csv"
+X_FILE = DATA_PROCESSED_DIR / "X.npy"
+y_FILE = DATA_PROCESSED_DIR / "y.npy"
+DATES_FILE = DATA_PROCESSED_DIR / "dates.npy"
 
-def load_raw():
-    """
-    Carga el CSV de BTC-USD desde /data/raw.
-    Retorna un DataFrame con la columna 'Date' parseada.
-    """
-    download_btc_csv()
-    df = pd.read_csv(CSV_FILE, parse_dates=["Date"])
-    if "Close" not in df.columns:
-        raise ValueError("La columna 'Close' no está en el archivo CSV.")
-    return df
+HORIZON = 7
 
-def add_features(df):
-    df.columns = [col.strip().capitalize() for col in df.columns]
+logging.info(f"Cargando dataset completo desde {DATASET_FILE}")
+df = pd.read_csv(DATASET_FILE, parse_dates=["Date"])
 
-    numeric_cols = ["Open", "High", "Low", "Close", "Adj close", "Volume"]
-    for col in numeric_cols:
-        df[col] = pd.to_numeric(df[col], errors="coerce")
+# ---- Crear features ----
+df["ma_7"] = df["Close"].rolling(7).mean()
+df["std_7"] = df["Close"].rolling(7).std()
+df["return_1d"] = df["Close"].pct_change(1)
 
-    # Features alineados con horizon=7
-    df["ma_7"] = df["Close"].rolling(7).mean()
-    df["std_7"] = df["Close"].rolling(7).std()
-    df["ma_14"] = df["Close"].rolling(14).mean()  # opcional, más largo
-    df["return_1d"] = df["Close"].pct_change(1)
+df = df.dropna().reset_index(drop=True)
 
-    print(f"Filas antes de dropna: {len(df)}")
-    df = df.dropna()
-    print(f"Filas después de dropna: {len(df)}")
+# ---- Columnas a usar como features ----
+feature_cols = [c for c in df.columns if c not in ["Date", "Close", "Close_gold", "Close_sp", "Close_google"]]
 
-    return df
+X, y, dates = [], [], []
 
-def get_X_y_for_horizon(df, horizon=7, feature_cols=None):
-    """
-    Prepara matrices X (features) e y (targets) para predicción multistep.
+for i in range(len(df) - HORIZON):
+    X.append(df.loc[i, feature_cols].values)
+    y.append(df.loc[i+1:i+HORIZON, "Close"].values)
+    dates.append(df.loc[i, "Date"])
 
-    Parámetros:
-    - df: DataFrame con features.
-    - horizon: cantidad de días a predecir.
-    - feature_cols: lista de columnas a usar como entrada.
+X = np.array(X)
+y = np.array(y)
+dates = np.array(dates)
 
-    Retorna:
-    - X: matriz de features (n_samples x n_features)
-    - y: matriz de targets (n_samples x horizon)
-    - dates: fechas asociadas a cada muestra
-    - feature_cols: lista final de columnas usadas
-    """
-    df = df.copy().reset_index(drop=True)
-    if feature_cols is None:
-        feature_cols = [c for c in df.columns if c not in ["Date", "Open", "High", "Low", "Close", "Adj Close", "close"]]
-
-    X, y, dates = [], [], []
-    for i in range(len(df) - horizon):
-        X.append(df.loc[i, feature_cols].values)
-        y.append(df.loc[i+1:i+horizon, "Close"].values)
-        dates.append(df.loc[i, "Date"])
-    return np.array(X), np.array(y), dates, feature_cols
+np.save(X_FILE, X)
+np.save(y_FILE, y)
+np.save(DATES_FILE, dates)
+logging.info(f"X shape: {X.shape}, y shape: {y.shape}")
+logging.info(f"Matrizes guardadas en {DATA_PROCESSED_DIR}")
