@@ -2,7 +2,7 @@
 
 Grupo 9 – Trabajo Práctico de Machine Learning
 
-***Integrantes:**
+**Integrantes:**
 
 Victoria Arias
 
@@ -106,11 +106,17 @@ Ejemplo de salida (data/processed/prediccion_7dias.csv):
 Date,Predicted_Close
 
 2025-10-14,118841.34
+
 2025-10-15,118373.67
+
 2025-10-16,117597.73
+
 2025-10-17,116018.85
+
 2025-10-18,115992.55
+
 2025-10-19,114615.17
+
 2025-10-20,114774.30
 
 **Evaluación y resultados**
