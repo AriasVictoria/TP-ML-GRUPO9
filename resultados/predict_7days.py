@@ -3,65 +3,67 @@ import pandas as pd
 import joblib
 from pathlib import Path
 from datetime import timedelta
+import requests
 
-# --------------------------
-# Rutas
-# --------------------------
+# -------------------------- Rutas --------------------------
 DATA_PROCESSED_DIR = Path(__file__).resolve().parents[1] / "data" / "processed"
 MODELS_DIR = Path(__file__).resolve().parents[1] / "models"
-
 X_FILE = DATA_PROCESSED_DIR / "X.npy"
 MODEL_FILE = MODELS_DIR / "rf_model.pkl"
-DATASET_FILE = DATA_PROCESSED_DIR / "dataset_completo.csv"
-OUTPUT_FILE = DATA_PROCESSED_DIR / "prediccion_7dias.csv"
+OUTPUT_DIR = DATA_PROCESSED_DIR / "predicciones_diarias"
+OUTPUT_DIR.mkdir(exist_ok=True)
 
-# --------------------------
-# Cargar datos
-# --------------------------
+# -------------------------- Función para precio BTC real --------------------------
+def obtener_precio_real_btc():
+    try:
+        response = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd")
+        response.raise_for_status()
+        precio = response.json()["bitcoin"]["usd"]
+        return precio
+    except Exception as e:
+        print("⚠️ No se pudo obtener el precio real de BTC:", e)
+        return None
+
+# -------------------------- Cargar datos --------------------------
 print("Cargando X...")
 X = np.load(X_FILE, allow_pickle=True)
-
 print("Cargando modelo...")
 model = joblib.load(MODEL_FILE)
 
-# --------------------------
-# Última ventana de entrada
-# --------------------------
+# -------------------------- Última ventana de entrada --------------------------
 last_X = X[-1].reshape(1, -1)
 
-# --------------------------
-# Obtener última fecha real del dataset
-# --------------------------
-df = pd.read_csv(DATASET_FILE, parse_dates=["Date"])
-last_date = df["Date"].max()
+# -------------------------- Fecha de inicio --------------------------
+hoy = pd.Timestamp.today().normalize()
+start_date = hoy + timedelta(days=1)  # siempre predicción desde mañana
 
-# --------------------------
-# Forzar inicio en 14-10-2025
-# --------------------------
-start_date = pd.Timestamp("2025-10-14")
-
-# --------------------------
-# Predicción para 7 días futuros
-# --------------------------
-print("Generando predicciones...")
-
+# -------------------------- Predicción --------------------------
 pred = model.predict(last_X)
-
-# Si el modelo devuelve un array 2D (1,7), lo aplanamos
 if isinstance(pred, (list, np.ndarray)) and np.ndim(pred) > 1:
     pred = pred.flatten()
 
+# -------------------------- Ajustar primera predicción al precio real --------------------------
+precio_real = obtener_precio_real_btc()
+if precio_real:
+    pred[0] = precio_real
+
+# -------------------------- Fechas futuras --------------------------
 future_dates = [(start_date + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(7)]
 
-# --------------------------
-# Crear y guardar DataFrame
-# --------------------------
+# -------------------------- Formatear precios --------------------------
+def formatear_precio(x):
+    return f"{x:,.2f} USD".replace(",", "X").replace(".", ",").replace("X", ".")
+
+pred_formateado = [formatear_precio(p) for p in pred[:7]]
+
+# -------------------------- Crear DataFrame --------------------------
 df_pred = pd.DataFrame({
     "Date": future_dates,
-    "Predicted_Close": pred[:7]
+    "Predicted_Close": pred_formateado
 })
 
-df_pred.to_csv(OUTPUT_FILE, index=False, sep=",", header=True)
-
-print(f"✅ Predicciones guardadas en {OUTPUT_FILE}")
+# -------------------------- Guardar CSV diario --------------------------
+archivo_salida = OUTPUT_DIR / f"prediccion_{hoy.strftime('%Y-%m-%d')}.csv"
+df_pred.to_csv(archivo_salida, index=False, sep=",", header=True)
+print(f"✅ Predicciones ajustadas guardadas en {archivo_salida}")
 print(df_pred)
