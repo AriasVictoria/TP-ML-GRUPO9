@@ -12,17 +12,18 @@ Juan Molina
 
 **Objetivo del proyecto**
 
-Desarrollar un sistema de aprendizaje automático (Machine Learning) capaz de predecir el precio de cierre diario del Bitcoin (BTC-USD) para los próximos 7 días, utilizando datos históricos financieros y de interés público.
+Desarrollar un sistema de predicción del precio de cierre diario de Bitcoin (BTC-USD) para los próximos 7 días, utilizando datos históricos financieros.
+El proyecto implementa un flujo completo de Machine Learning: descarga de datos, preprocesamiento, creación de features, entrenamiento de modelos y generación automática de predicciones diarias.
 
-**El proyecto abarca todo el flujo de trabajo de un modelo de predicción real:**
+El proyecto abarca todo el flujo de trabajo de un modelo de predicción real:
 
-1- Obtención y preparación de datos.
+1. Obtención y preparación de datos.  
 
-2- Análisis exploratorio y creación de features.
+2. Análisis exploratorio y creación de features.  
 
-3- Entrenamiento y comparación de modelos.
+3. Entrenamiento y evaluación del modelo.  
 
-4- Generación automática de predicciones diarias.
+4. Generación automática de predicciones diarias.  
 
 **Estructura del repositorio**
 
@@ -30,17 +31,23 @@ TP-ML-GRUPO9/
 
 │
 ├── analisis_exploratorio/
-│   └── features.py             
+│   └── features.py
+│   └── data_fetch.py            
 │
 ├── data/
-│   ├── raw/                     
-│   └── processed/              
+│   ├── raw/ 
+│        └── Archivos (BTC, GOLD, SP500  FEDFUNDS)                   
+│   └── processed/
+│        └── scaler.pkl
+│        └── X.npy 
+│        └── y.npy    
 │
 ├── experimento/
-│   └── train_and_evaluate.py    
+│   └── train_and_evaluate.py     
 │
 ├── modelos/
-│   └── models.py               
+│   └── gru_model.h5
+│   └── rf_model.pkl               
 │
 ├── resultados/
 │   └── predict_7days.py       
@@ -51,17 +58,16 @@ TP-ML-GRUPO9/
 └── README.md
 
 **Fuentes de datos**
+
 El sistema utiliza datos históricos provenientes de diversas fuentes:
 
 Fuente	     Variable principal	     Archivo
 
-Yahoo -------- Finance	-----   Precio de Bitcoin (BTC-USD)	BTC-USD_daily.csv
+Yahoo Finance--	Precio de Bitcoin (BTC-USD)   ----- BTC-USD_daily.csv 
 
 Yahoo Finance--	Oro (GOLD) ----- GOLD.csv
 
 Yahoo Finance -- S&P 500 Index ---- SP500.csv
-
-Google Trends ------ Término “Bitcoin” (popularidad) ----- multiTimeline.csv
 
 FRED ----- Tasa de fondos federales (FED Funds) ---- FEDFUNDS.csv
 
@@ -89,17 +95,15 @@ python resultados/predict_7days.py
 
 **Modelos implementados**
 
-* Ridge Regression: modelo lineal regularizado, utilizado como baseline.
+* Ridge Regression: modelo lineal regularizado (baseline).
 
-* Random Forest Regressor: modelo de árboles de decisión promediados, robusto ante ruido.
+* Random Forest Regressor: robusto frente a ruido y no linealidades.
 
-* LightGBM Regressor: modelo de boosting de gradiente, elegido como el de mejor desempeño.
+* LightGBM Regressor: modelo de boosting, seleccionado como mejor desempeño.
 
-Cada modelo fue evaluado mediante métricas MAE (Error Absoluto Medio) y RMSE (Raíz del Error Cuadrático Medio), utilizando un esquema multisalida que predice simultáneamente los 7 valores futuros.
+Todos los modelos están envueltos en MultiOutputRegressor para predecir los 7 días simultáneamente.
 
 **Predicción automática**
-
-El script predict_7days.py toma la última ventana de entrada del dataset procesado y genera la predicción del precio de cierre para los próximos 7 días, comenzando en la fecha más reciente (por ejemplo, desde el 14/10/2025).
 
 Ejemplo de salida (data/processed/prediccion_7dias.csv):
 
@@ -129,13 +133,9 @@ Date,Predicted_Close
 
 *Resultados:*
 
-1- Ridge Regression → mayor error (baseline).
+1- Predicciones precisas para horizontes de 1 a 3 días, con un error esperado de 3% a 5%
 
-2- Random Forest → mejora significativa sobre Ridge.
-
-3- LightGBM → menor error global y mejor estabilidad temporal.
-
-Error esperado: entre 3% y 5% del precio diario para horizontes de 1 a 3 días, aumentando hacia el día 7.
+2- El error aumenta ligeramente hacia el día 7, como es esperable en predicciones a más largo plazo.
 
 **Conclusiones**
 
@@ -145,11 +145,11 @@ El sistema desarrollado:
 
 2- Predice 7 días hacia adelante usando datos históricos reales.
 
-3- Incorpora múltiples fuentes de información.
+3- Incorpora múltiples fuentes de información (BTC, oro, S&P500, FED Funds, Google Trends).
 
-4- Compara y selecciona el modelo más eficiente (LightGBM multisalida).
+4- Genera predicciones reproducibles con scripts automatizados y multisalida.
 
-5- Genera predicciones reproducibles con scripts automatizados.
+5- Permite imprimir resultados en terminal y guardarlos en CSV automáticamente.
 
 La precisión no fue el principal objetivo del trabajo; el foco estuvo en aplicar una metodología completa, reproducible y documentada para un problema real de predicción temporal.
 
