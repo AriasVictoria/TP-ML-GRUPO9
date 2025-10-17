@@ -1,5 +1,11 @@
 Predicción de Precio de Bitcoin (BTC-USD) - Machine Learning 🚀
 
+👥 Integrantes
+
+- Arias Victoria  
+- Gretter Alejandro  
+- Molina Juan Ignacio
+
 📋 Descripción del Proyecto
 
 Este proyecto implementa modelos de Machine Learning para predecir el precio de cierre de Bitcoin (BTC-USD) para los próximos 7 días. El flujo completo incluye:
