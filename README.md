@@ -71,6 +71,7 @@ TP-ML-GRUPO9/
 ├─ download_data.py                        # Descarga de datos desde las fuentes originales
 ├─ memoria_TP_ML_grupo_9.pdf              # Memoria técnica del proyecto
 └─ README.md                               # Archivo de documentación del repositorio
+```
 
 🔬 Modelos Implementados
 
