@@ -1,52 +1,56 @@
-**Predicción del Precio de Cierre de Bitcoin (BTC-USD)**
+Predicción de Precio de Bitcoin (BTC-USD) - Machine Learning 🚀
 
-Grupo 9 – Trabajo Práctico de Machine Learning
+📋 Descripción del Proyecto
 
-**Integrantes:**
+Este proyecto implementa modelos de Machine Learning para predecir el precio de cierre de Bitcoin (BTC-USD) para los próximos 7 días. El flujo completo incluye:
 
-Victoria Arias
+- Descarga y preparación de datos
 
-Alejandro Gretter
+- Análisis exploratorio y creación de features
 
-Juan Molina
+- Entrenamiento y comparación de modelos
 
-**Objetivo del proyecto**
+- Generación automática de predicciones diarias
 
-Desarrollar un sistema de predicción del precio de cierre diario de Bitcoin (BTC-USD) para los próximos 7 días, utilizando datos históricos financieros.
-El proyecto implementa un flujo completo de Machine Learning: descarga de datos, preprocesamiento, creación de features, entrenamiento de modelos y generación automática de predicciones diarias.
+🎯 Objetivo
 
-El proyecto abarca todo el flujo de trabajo de un modelo de predicción real:
+Predecir el precio de cierre de Bitcoin para un horizonte de 7 días (D+1 hasta D+7) utilizando:
 
-1. Obtención y preparación de datos.  
+- Datos históricos de precio (OHLCV)
 
-2. Análisis exploratorio y creación de features.  
+- Variables derivadas de precios de oro, S&P500 y FED Funds Rate
 
-3. Entrenamiento y evaluación del modelo.  
+- Modelos multisalida: Ridge, Random Forest, LightGBM
 
-4. Generación automática de predicciones diarias.  
+🧪 Metodología
 
-**Estructura del repositorio**
+- Estrategia: Multi-step directo (un modelo multisalida por 7 días)
+
+- Validación: Split temporal (80% train / 20% test)
+
+- Métricas: MAE y RMSE por día de horizonte
+
+📁 Estructura del Repositorio
 
 TP-ML-GRUPO9/
-
 │
 ├── analisis_exploratorio/
-│   └── features.py
+│   ├── features.py
 │   └── data_fetch.py            
 │
 ├── data/
 │   ├── raw/ 
-│        └── Archivos (BTC, GOLD, SP500  FEDFUNDS)                   
+│   │    └── Archivos (BTC, GOLD, SP500, FEDFUNDS)                   
 │   └── processed/
-│        └── scaler.pkl
-│        └── X.npy 
+│        ├── scaler.pkl
+│        ├── X.npy 
 │        └── y.npy    
 │
 ├── experimento/
 │   └── train_and_evaluate.py     
 │
 ├── modelos/
-│   └── gru_model.h5
+│   ├── gru_model.h5
 │   └── rf_model.pkl               
 │
 ├── resultados/
@@ -57,104 +61,86 @@ TP-ML-GRUPO9/
 ├── memoria_TP_ML_grupo_9.pdf    
 └── README.md
 
-**Fuentes de datos**
+🔬 Modelos Implementados
 
-El sistema utiliza datos históricos provenientes de diversas fuentes:
+| Modelo                  | Descripción                                |
+|-------------------------|--------------------------------------------|
+| Ridge Regression        | Baseline lineal regularizado               |
+| Random Forest Regressor | Robusto ante ruido y no linealidades       |
+| LightGBM Regressor      | Mejor desempeño y estabilidad temporal     |
 
-Fuente	     Variable principal	     Archivo
+📊 Features Utilizadas
 
-Yahoo Finance--	Precio de Bitcoin (BTC-USD)   ----- BTC-USD_daily.csv 
+| Feature                    | Descripción                                |
+|----------------------------|--------------------------------------------|
+| ma_7, std_7                | Media móvil y desviación estándar 7 días   |
+| return_1d                  | Retorno diario del precio BTC              |
+| Variables derivadas del oro| Precio de cierre del oro                    |
+| Variables derivadas del S&P500 | Precio de cierre del índice S&P500     |
+| Variables derivadas de FED Funds | Tasa de fondos federales             |
 
-Yahoo Finance--	Oro (GOLD) ----- GOLD.csv
+📈 Evaluación de Modelos
 
-Yahoo Finance -- S&P 500 Index ---- SP500.csv
+| Modelo                  | MAE Promedio | Observación                                   |
+|-------------------------|-------------|-----------------------------------------------|
+| Ridge Regression        | Alto        | Baseline lineal                               |
+| Random Forest Regressor | Medio       | Mejor que Ridge, robusto a no linealidades   |
+| LightGBM Regressor      | Bajo        | Mejor desempeño global y estabilidad temporal|
 
-FRED ----- Tasa de fondos federales (FED Funds) ---- FEDFUNDS.csv
+Error esperado: 3–5% del precio diario para horizontes de 1 a 3 días, aumentando hacia el día 7.
 
-**Ejecución del flujo completo**
+💾 Generación de Predicciones Diarias
 
-1. Descargar los datos más recientes
+- Script: resultados/predict_7days.py
+
+- Output: data/processed/predicciones_diarias/predicciones_7dias_YYYY-MM-DD.csv
+
+- Impresión también en terminal
+
+Ejemplo de salida:
+
+Date	Predicted_Close
+2025-10-17	103619.52
+2025-10-18	107324.86
+2025-10-19	105909.22
+…	…
+
+🚀 Ejecución Rápida
+
+1- Descargar datos más recientes:
 
 python download_data.py
 
-2. Preparar el dataset completo
+
+2- Preparar dataset completo:
 
 python data_preparation.py
 
-3. Generar las features y las matrices X/y
+
+3- Generar features y matrices X/y:
 
 python analisis_exploratorio/features.py
 
-4. Entrenar y evaluar los modelos
+
+4- Entrenar y evaluar modelos:
 
 python experimento/train_and_evaluate.py
 
-5. Generar la predicción de los próximos 7 días
+
+5- Generar predicción de los próximos 7 días:
 
 python resultados/predict_7days.py
 
-**Modelos implementados**
-
-* Ridge Regression: modelo lineal regularizado (baseline).
-
-* Random Forest Regressor: robusto frente a ruido y no linealidades.
-
-* LightGBM Regressor: modelo de boosting, seleccionado como mejor desempeño.
-
-Todos los modelos están envueltos en MultiOutputRegressor para predecir los 7 días simultáneamente.
-
-**Predicción automática**
-
-Ejemplo de salida (data/processed/prediccion_7dias.csv):
-
-Date,Predicted_Close
-
-2025-10-14,118841.34
-
-2025-10-15,118373.67
-
-2025-10-16,117597.73
-
-2025-10-17,116018.85
-
-2025-10-18,115992.55
-
-2025-10-19,114615.17
-
-2025-10-20,114774.30
-
-**Evaluación y resultados**
-
-*Métricas empleadas:*
-
-1- MAE (Error Absoluto Medio)
-
-2- RMSE (Raíz del Error Cuadrático Medio)
-
-*Resultados:*
-
-1- Predicciones precisas para horizontes de 1 a 3 días, con un error esperado de 3% a 5%
-
-2- El error aumenta ligeramente hacia el día 7, como es esperable en predicciones a más largo plazo.
-
-**Conclusiones**
-
-El sistema desarrollado:
-
-1- Cumple con los requerimientos del trabajo práctico.
-
-2- Predice 7 días hacia adelante usando datos históricos reales.
-
-3- Incorpora múltiples fuentes de información (BTC, oro, S&P500, FED Funds, Google Trends).
-
-4- Genera predicciones reproducibles con scripts automatizados y multisalida.
-
-5- Permite imprimir resultados en terminal y guardarlos en CSV automáticamente.
-
-La precisión no fue el principal objetivo del trabajo; el foco estuvo en aplicar una metodología completa, reproducible y documentada para un problema real de predicción temporal.
-
-**Requerimientos**
-
-Instalar las dependencias necesarias antes de ejecutar los scripts:
+📦 Dependencias
 
 pip install pandas numpy scikit-learn lightgbm yfinance joblib matplotlib
+
+📝 Conclusiones
+
+- Flujo completo y reproducible de predicción BTC implementado
+
+- Se compararon tres modelos multisalida, LightGBM mostró mejor desempeño
+
+- Predicciones automáticas para 7 días con actualización diaria
+
+- so de múltiples fuentes de información (BTC, GOLD, SP500, FED Funds)
