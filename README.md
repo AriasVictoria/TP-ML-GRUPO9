@@ -39,28 +39,38 @@ Predecir el precio de cierre de Bitcoin para un horizonte de 7 días (D+1 hasta 
 📁 Estructura del Repositorio
 
 TP-ML-GRUPO9/
-├── analisis_exploratorio/
-│   ├── features.py
-│   └── data_fetch.py
-├── data/
-│   ├── raw/
-│   │   └── Archivos (BTC, GOLD, SP500, FEDFUNDS)
-│   └── processed/
-│       ├── scaler.pkl
-│       ├── X.npy
-│       └── y.npy
-├── experimento/
-│   └── train_and_evaluate.py
-├── modelos/
-│   ├── gru_model.h5
-│   └── rf_model.pkl
-├── resultados/
-│   └── predict_7days.py
-├── data_preparation.py
-├── download_data.py
-├── memoria_TP_ML_grupo_9.pdf
-└── README.md
-
+│
+├─ analisis_exploratorio/
+│   ├─ features.py                        # Generación de features a partir del dataset procesado
+│   └─ data_fetch.py                       # Descarga y manejo de datos crudos
+│
+├─ data/
+│   ├─ raw/                               # Archivos de datos originales
+│   │   ├─ BTC-USD_daily.csv
+│   │   ├─ GOLD.csv
+│   │   ├─ SP500.csv
+│   │   └─ FEDFUNDS.csv
+│   │
+│   └─ processed/                          # Datos preprocesados y matrices para entrenamiento
+│       ├─ scaler.pkl                      # Escalador guardado
+│       ├─ X.npy                           # Matriz de features
+│       ├─ y.npy                           # Matriz de targets
+│       └─ dates.npy                        # Fechas correspondientes a cada registro
+│
+├─ experimento/
+│   └─ train_and_evaluate.py              # Entrenamiento y evaluación de modelos
+│
+├─ modelos/
+│   ├─ gru_model.h5                        # Modelo GRU entrenado
+│   └─ rf_model.pkl                         # Modelo Random Forest entrenado
+│
+├─ resultados/
+│   └─ predict_7days.py                    # Script para generar predicciones para los próximos 7 días
+│
+├─ data_preparation.py                     # Preparación y limpieza del dataset completo
+├─ download_data.py                        # Descarga de datos desde las fuentes originales
+├─ memoria_TP_ML_grupo_9.pdf              # Memoria técnica del proyecto
+└─ README.md                               # Archivo de documentación del repositorio
 
 🔬 Modelos Implementados
 
