@@ -56,7 +56,6 @@ TP-ML-GRUPO9/
 │       ├─ scaler.pkl                      # Escalador guardado
 │       ├─ X.npy                           # Matriz de features
 │       ├─ y.npy                           # Matriz de targets
-│       └─ dates.npy                        # Fechas correspondientes a cada registro
 │
 ├─ experimento/
 │   └─ train_and_evaluate.py              # Entrenamiento y evaluación de modelos
