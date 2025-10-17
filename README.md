@@ -39,33 +39,28 @@ Predecir el precio de cierre de Bitcoin para un horizonte de 7 días (D+1 hasta 
 📁 Estructura del Repositorio
 
 TP-ML-GRUPO9/
-│
 ├── analisis_exploratorio/
 │   ├── features.py
-│   └── data_fetch.py            
-│
+│   └── data_fetch.py
 ├── data/
-│   ├── raw/ 
-│   │    └── Archivos (BTC, GOLD, SP500, FEDFUNDS)                   
+│   ├── raw/
+│   │   └── Archivos (BTC, GOLD, SP500, FEDFUNDS)
 │   └── processed/
-│        ├── scaler.pkl
-│        ├── X.npy 
-│        └── y.npy    
-│
+│       ├── scaler.pkl
+│       ├── X.npy
+│       └── y.npy
 ├── experimento/
-│   └── train_and_evaluate.py     
-│
+│   └── train_and_evaluate.py
 ├── modelos/
 │   ├── gru_model.h5
-│   └── rf_model.pkl               
-│
+│   └── rf_model.pkl
 ├── resultados/
-│   └── predict_7days.py       
-│
-├── data_preparation.py         
-├── download_data.py             
-├── memoria_TP_ML_grupo_9.pdf    
+│   └── predict_7days.py
+├── data_preparation.py
+├── download_data.py
+├── memoria_TP_ML_grupo_9.pdf
 └── README.md
+
 
 🔬 Modelos Implementados
 
