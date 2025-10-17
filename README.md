@@ -36,6 +36,7 @@ Predecir el precio de cierre de Bitcoin para un horizonte de 7 días (D+1 hasta 
 
 - Métricas: MAE y RMSE por día de horizonte
 
+```markdown
 📁 Estructura del Repositorio
 
 TP-ML-GRUPO9/
@@ -111,9 +112,13 @@ Error esperado: 3–5% del precio diario para horizontes de 1 a 3 días, aumenta
 Ejemplo de salida:
 
 Date	Predicted_Close
+
 2025-10-17	103619.52
+
 2025-10-18	107324.86
+
 2025-10-19	105909.22
+
 …	…
 
 🚀 Ejecución Rápida
@@ -122,21 +127,17 @@ Date	Predicted_Close
 
 python download_data.py
 
-
 2- Preparar dataset completo:
 
 python data_preparation.py
-
 
 3- Generar features y matrices X/y:
 
 python analisis_exploratorio/features.py
 
-
 4- Entrenar y evaluar modelos:
 
 python experimento/train_and_evaluate.py
-
 
 5- Generar predicción de los próximos 7 días:
 
